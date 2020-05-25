@@ -11,7 +11,7 @@ FIX01 =
 
 .F90.o:
 		$(RM) $@ 
-		$(CPP) $(CPPFLAGS) -D$(MACH) $(FIX01) $*.f90 > $*.f
+		$(CPP) $(CPPFLAGS) -D$(MACH) $(FIX01) $*.F90 > $*.f
 		$(FC) -c $(FCFLAGS) $*.f
 		
 
