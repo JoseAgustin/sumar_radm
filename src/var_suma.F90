@@ -27,12 +27,14 @@ real,allocatable ::xlon(:,:,:),xlat(:,:,:)! by nx,ny,nh emissions
 real,allocatable ::vus(:,:,:,:) ! by nx,ny,nh,tim emissions array
 real,allocatable:: EMI_USA(:,:,:,:,:) ! Emissions nx,ny,nh,tim,nradm
 real,allocatable:: EMI_MEX(:,:,:,:,:) ! Emissions nx,ny,nh,tim,nradm
+real,allocatable:: EMI_EDG(:,:,:,:,:) ! Emissions nx,ny,nh,tim,nradm
 
 character(len=19)::mminlu,map_proj_char
 character (len=38) :: Title
 character (len=19) :: current_date,mecha
 character (len=19),dimension(1,1)::Times ! Date character
-character (len=11),allocatable :: ENAME(:),ENMX(:) !US and Mex emissions Names
+character (len=11),allocatable :: ENAME(:),ENMX(:)!US and Mex emissions Names
+character (len=11),allocatable ::  EMCA(:) ! EDGAR emissions Names
 character (len=11),dimension(mozart) :: EMOZ=(/ & !RADM Emissions Names
         'E_CO   ','E_NH3  ','E_NO   ', &
         'E_NO2  ','E_SO2  ','E_ALD  ','E_CH4  ','E_CSL  ','E_ETH  ','E_GLY  ', &

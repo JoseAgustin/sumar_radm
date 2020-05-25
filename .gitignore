@@ -1,0 +1,7 @@
+*.o
+*.mod
+*.f
+.DS_Store
+.tmpfile
+wrf*
+*.exe

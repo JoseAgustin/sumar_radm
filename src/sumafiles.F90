@@ -21,6 +21,7 @@
 
 program sumafiles
 
+  call  lee_wrf (00,"EDG")
   call  lee_wrf (00,"USA")
   call  lee_wrf (00,"MEX")
   call guarda_emis

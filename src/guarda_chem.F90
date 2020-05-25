@@ -22,19 +22,25 @@ use var_suma
 implicit none
 
   integer :: i,j,l
-  integer :: ius,imx,ikk !species indexes US Mex radm2
+  integer :: ius,imx,ied,ikk !species indexes US Mex radm2
   integer :: it,iit,eit,PERIODO,iu,id
   integer :: ncid,itnc
   integer :: id_varlong,id_varlat
   integer,dimension(nDims) ::dim,id_dim
   integer :: dimids2(2),dimids3(3),dimids4(4)
-
+  real,dimension(0:23)::ft_edgar=(/ 1.22954028, 1.015457123,&
+     0.794663897,0.627231697,&
+     0.526900188, 0.466509566, 0.459799497, 0.433278747, 0.459799497, 0.520190119,&
+     0.60710149, 0.747693414, 0.928545752, 1.109078564, 1.269800695, 1.370132204,&
+     1.430203299, 1.490274394, 1.510404601, 1.51711467, 1.490274394, 1.410073092,&
+     1.309741582, 1.276191237 /)
   real,ALLOCATABLE :: ea(:,:,:,:)
 
   character (len=22) :: FILE_NAME
   character(8)  :: date,cday
   character(10) :: time
   character(19) :: hoy
+
   print *,"Guarda Archivo"
   allocate(id_var(mozart+1))
   call date_and_time(date,time)
@@ -45,7 +51,7 @@ implicit none
   if(current_date(12:13).EQ. "00") then
     print *,'PERIODO 1'
     FILE_NAME='wrfchemi_00z_d01'         !******
-    TITLE="NEI_2011 Emissions for 0 to 11z"
+    TITLE="Emissions for 0 to 11z V4.2 US NEI 2011, INEM 2014, EDGAR 2012"
     PERIODO=1
     iit= 0
     eit=11
@@ -53,7 +59,7 @@ implicit none
   else
     Print *,'PERIODO 2'
     FILE_NAME='wrfchemi_12z_d01'         !******
-    TITLE="NEI_2011 Emissions for 12 to 23z"
+    TITLE="Emissions for 12 to 23z V4.2 US NEI 2011, INEM 2014, EDGAR 2012"
     PERIODO=2
     iit=0 !12
     eit=11! 23
@@ -108,7 +114,7 @@ implicit none
     call check( nf90_put_att(ncid, nf90_global, "NUM_LAND_CAT",num_land_cat))
     call check( nf90_put_att(ncid, nf90_global, "ISOILWATER",isoilwater))
     call check( nf90_put_att(ncid, nf90_global, "GRID_ID",grid_id))
-    call check( nf90_put_att(ncid, NF90_GLOBAL, "MECHANISM","MOZART"))
+    call check( nf90_put_att(ncid, NF90_GLOBAL, "MECHANISM","RADM2"))
     call check( nf90_put_att(ncid, NF90_GLOBAL, "CREATION_DATE",hoy))
 !  Define las variables
     call check( nf90_def_var(ncid, "Times", NF90_CHAR, dimids2,id_var(mozart+1) ) )
@@ -144,13 +150,7 @@ implicit none
       gases: do ikk=1,mozart
         ea=0.0
         if(ikk.eq.1) then
-          if (itnc.lt.10) then
-            write(current_date(13:13),'(A1)')char(itnc+48)
-          else
-            id = int((itnc)/10)+48 !  Decenas
-            iu = itnc-10*int((itnc)/10)+48 ! unidades
-            write(current_date(12:13),'(A1,A1)')char(id),char(iu)
-          end if
+        write(current_date(12:13),'(I2.2)')itnc
         write(current_date(1:4),'(I4)') julyr
         Times(1,1)=current_date(1:19)
         call check( nf90_put_var(ncid, id_var(mozart+1),Times,start=(/1,it+1/)) )
@@ -159,6 +159,7 @@ implicit none
         end if   ! for kk == 1
         mex:do imx=1,SIZE(EMI_MEX,DIM=5)
           if(ENMX(imx).eq.EMOZ(ikk)) then
+!$omp parallel do private(j,l)
           lon: do i=1, dim(3)
             lat:do j=1, dim(4)
               lev:do l=1,dim(6)
@@ -166,22 +167,40 @@ implicit none
               end do lev
             end do lat
           end do lon
+!$omp end parallel do
           end if
         end do mex
 !
         us: do ius=1,SIZE(EMI_USA,DIM=5)
           if(ename(ius).eq.EMOZ(ikk)) then
+!$omp parallel do private(j,l)
             lonu: do i=1, dim(3)
               latu:do j=1, dim(4)
                 levu:do l=1,dim(6)
-                 if(ea(i,j,l,1).eq.0 .and.j.gt.93) &
+                 if(ea(i,j,l,1).eq.0 .and.ea(i,j,2,1).eq.0) &
                   ea(i,j,l,1)=EMI_USA(i,j,l,it+1,ius)
                 end do levu
               end do latu
             end do lonu
+!$omp end parallel do
             exit
           end if
         end do us
+        edg: do ied=1,SIZE(EMI_EDG,DIM=5)
+        if(EMCA(ied).eq.EMOZ(ikk)) then
+!$omp parallel do private(j,l)
+          lone: do i=1, dim(3)
+            late:do j=1, dim(4)
+              leve:do l=1,SIZE(EMI_EDG,DIM=3)
+                if(ea(i,j,l,1).eq.0 .and. ea(i,j,2,1).eq.0) &
+                ea(i,j,l,1)=EMI_EDG(i,j,l,1,ied)*ft_edgar(itnc)
+              end do leve
+            end do late
+          end do lone
+!$omp end parallel do
+          exit
+        end if
+        end do edg
       !if(periodo.eq.1) then
         call check( nf90_put_var(ncid, id_var(ikk),ea,start=(/1,1,1,it+1/)) )
       !else
@@ -192,6 +211,7 @@ implicit none
 ! Close NETCDF file
     call check( nf90_close(ncid) )
     deallocate(ea,EMI_USA,EMI_MEX,ENMX,ename)
+    if(periodo.eq.2)deallocate(EMI_EDG,EMCA,xlon,xlat)
 contains
 
 !  CCCC RRRR  EEEEE  AAA      AAA  TTTTT TTTTT RRRR
