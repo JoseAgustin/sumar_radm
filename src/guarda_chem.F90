@@ -212,7 +212,7 @@ implicit none
     call check( nf90_close(ncid) )
     deallocate(ea,EMI_USA,EMI_MEX,ENMX,ename)
     if(periodo.eq.2)then
-       if allocated(EMI_EDG) deallocate(EMI_EDG,EMCA)
+       if (allocated(EMI_EDG)) deallocate(EMI_EDG,EMCA)
        deallocate(xlon,xlat)
     end if
 contains
