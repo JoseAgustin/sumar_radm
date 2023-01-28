@@ -211,7 +211,10 @@ implicit none
 ! Close NETCDF file
     call check( nf90_close(ncid) )
     deallocate(ea,EMI_USA,EMI_MEX,ENMX,ename)
-    if(periodo.eq.2)deallocate(EMI_EDG,EMCA,xlon,xlat)
+    if(periodo.eq.2)then
+       if allocated(EMI_EDG) deallocate(EMI_EDG,EMCA)
+       deallocate(xlon,xlat)
+    end if
 contains
 
 !  CCCC RRRR  EEEEE  AAA      AAA  TTTTT TTTTT RRRR
