@@ -29,7 +29,7 @@ implicit none
   character (len = *), parameter :: LAT_NAME = "XLAT"
   character (len = *), parameter :: LON_NAME = "XLONG"
   character (len = *), parameter :: REC_NAME = "Times"
-  write(6,"(A25)"),"    "
+  write(6,"(A25)") "    "
   select case (country)
     case ('USA')
       filename="wrfchemi_00z_d01_us"
@@ -43,7 +43,7 @@ implicit none
       stop "Error in country"
   end select
 
-  write(6,"(A,x,A)"),'****    Start reading',filename
+  write(6,"(A,x,A)") '****    Start reading',filename
   call check(nf90_open(filename, NF90_NOWRITE, ncid))
   call check(nf90_inquire(ncid, nDims2, nVars, nGlobalAtts, unlimdimid))
   call check(nf90_inq_dimid(ncid, "south_north", lat_varid))
@@ -179,7 +179,7 @@ print *,'-----  Reading Emissions Variables   -----'
   end do
   call check( nf90_close(ncid) )
   deallocate(vus,id_var)
-  write(6,"(A,x,A,x,A)"),'****    Done reading',filename, mecha
+  write(6,"(A,x,A,x,A)") '****    Done reading',filename, mecha
 
 end subroutine lee_wrf
 

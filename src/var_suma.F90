@@ -40,17 +40,22 @@ character (len=11),dimension(mozart) :: EMOZ=(/ & !RADM Emissions Names
         'E_NO2  ','E_SO2  ','E_ALD  ','E_CH4  ','E_CSL  ','E_ETH  ','E_GLY  ', &
         'E_HC3  ','E_HC5  ','E_HC8  ','E_HCHO ','E_ISO  ','E_KET  ','E_MACR ', &
         'E_MGLY ','E_MVK  ','E_OL2  ','E_OLI  ','E_OLT  ','E_ORA1 ','E_ORA2 ', &
-        'E_TOL  ','E_XYL  ','E_CO2  ','E_PM_10','E_PM25 ','E_SO4I ','E_NO3I','E_PM25I',&
+        'E_TOL  ','E_XYL  ','E_CO2  ','E_PM_10','E_PM25 ','E_SO4I ','E_NO3I ','E_PM25I',&
         'E_ORGI ','E_ECI  ','E_SO4J ','E_NO3J ','E_PM25J','E_ORGJ ','E_ECJ  '/)
 character(len=19),dimension(mozart):: cname=(/& !RADM2 Emissions description
-        'Carbon Monoxide ','NH3             ','NO              ', &
-        'NO2  ','SO2  ','ALDEHYDES  ','METHANE','CRESOL','Ethane','Glyoxal', &
-        'HC3  ','HC5  ','HC8  ','HCHO ','ISOPRENE','Acetone','Acrolein', &
-        'MGLY ','Methyl Vinil Ketone  ','Alkenes','alkenes   ','Terminal Alkynes',&
-        'Formic Acid','Acetic Acid ','TOLUENE  ','XYLENE  ','Carbon Dioxide',&
-        'PM_10','PM_25 ','Sulfates','Nitrates ','PM25I',&
-        'Organic ','Elemental Carbon','SulfatesJ','NitratesJ','PM25J',&
-        'Organic','Elemental Carbon'/)
+        'Carbon Monoxide    ','NH3                ','NO                 ', &
+        'NO2                ','SO2                ','ALDEHYDES          ', &
+        'METHANE            ','CRESOL             ','Ethane             ', &
+        'Glyoxal            ','HC3                ','HC5                ', &
+        'HC8                ','HCHO               ','ISOPRENE           ', &
+        'Acetone            ','Acrolein           ','MGLY               ', &
+        'Methyl Vinil Ketone','Alkenes            ','alkenes            ', &
+        'Terminal Alkynes   ','Formic Acid        ','Acetic Acid        ', &
+        'TOLUENE            ','XYLENE             ','Carbon Dioxide     ', &
+        'PM_10              ','PM_25              ','Sulfates           ', &
+        'Nitrates           ','PM25I              ','Organic Carbon     ', &
+        'Elemental Carbon   ','SulfatesJ          ','NitratesJ          ', &
+        'PM25J              ','Organic Carbon J   ','Elemental Carbon   '/)
 character (len=19),dimension(NDIMS) ::sdim=(/"Time               ",&
 & "DateStrLen         ","west_east          ","south_north        ",&
 &"bottom_top         ","emissions_zdim_stag"/)
